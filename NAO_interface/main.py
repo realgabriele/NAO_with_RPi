@@ -1,8 +1,12 @@
-"""execute all needed processes"""
+"""execute all needed processes
+    as concurrent subprocesses"""
 
 import multiprocessing
-import camera_extractor, commands_executioner, events_extractor, memory_extractor
-import time
+
+import camera_extractor
+import commands_executioner
+import events_extractor
+import memory_extractor
 
 processes = [camera_extractor.main,
              commands_executioner.main,
@@ -17,6 +21,6 @@ if __name__ == "__main__":
 
     try:
         while True:
-            time.sleep(60)
+            pass
     except KeyboardInterrupt:
         print("exit main")
