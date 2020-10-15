@@ -1,0 +1,5 @@
+REDIS_IP = "192.168.1.30"
+REDIS_PORT = 6379
+
+NAO_IP = "localhost"
+NAO_PORT = 9559
