@@ -5,7 +5,7 @@ import cv2
 import imutils
 import numpy as np
 
-import NAO_interface
+import nao_interface
 
 
 def detect_ocv(frame, obj):

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """ Gives commands to take an object from the shelf """
-import NAO_interface
+import nao_interface
 
 
 def set_color(word):
@@ -12,20 +12,20 @@ def set_color(word):
     palla = [255, 0, 0, threshold]
     macchina = [0, 0, 255, threshold]
 
-    NAO_interface.execute_command("ALColorBlobDetectionProxy", "setColor", vars()[word.lower()])
+    nao_interface.execute_command("ALColorBlobDetectionProxy", "setColor", vars()[word.lower()])
 
 
 def listen():
     words = ['Palla', 'Papera', 'Macchina']
 
-    sub = NAO_interface.get_events()
+    sub = nao_interface.get_events()
 
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "pause", [True])
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "setLanguage", ['Italian'])
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "setVocabulary", [words, False])
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "subscribe", ['listen'])
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "pause", [False])
-    NAO_interface.execute_command("ALSpeechRecognitionProxy", "setParameter", ['speed', 80])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "pause", [True])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "setLanguage", ['Italian'])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "setVocabulary", [words, False])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "subscribe", ['listen'])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "pause", [False])
+    nao_interface.execute_command("ALSpeechRecognitionProxy", "setParameter", ['speed', 80])
 
     # return "Papera"
     for msg in sub.listen():
@@ -36,8 +36,8 @@ def listen():
                 arr = eval(value)
                 word = arr[0]
                 if arr[1] > 0.4:
-                    NAO_interface.execute_command("ALTextToSpeechProxy", "say", [word])
-                    NAO_interface.execute_command("ALSpeechRecognitionProxy", "unsubscribe", ['listen'])
+                    nao_interface.execute_command("ALTextToSpeechProxy", "say", [word])
+                    nao_interface.execute_command("ALSpeechRecognitionProxy", "unsubscribe", ['listen'])
                     return word
 
 

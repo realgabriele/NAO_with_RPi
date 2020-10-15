@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: UTF-8 -*-
 
-import NAO_interface as NAO
+import nao_interface as nao
 from listen import listen
 from detect import detect
 from prendi import prendi
@@ -10,11 +10,11 @@ import time
 
 
 def before():
-    NAO.execute_command("ALRobotPostureProxy", "goToPosture", ['StandInit', 0.7])
+    nao.execute_command("ALRobotPostureProxy", "goToPosture", ['StandInit', 0.7])
 
 
 def after():
-    NAO.execute_command("ALMotionProxy", "rest")
+    nao.execute_command("ALMotionProxy", "rest")
 
 
 def search(obj):
@@ -31,7 +31,7 @@ def search(obj):
 
         if center is None:  # non trovato
             # cerca (muovi in tondo)
-            NAO.move(0, 0, -0.2)
+            nao.move(0, 0, -0.2)
             time.sleep(3)
 
         else:  # trovato
@@ -57,10 +57,10 @@ def search(obj):
                 prendi()
             else:
                 curr_head += y
-                NAO.execute_command("ALMotionProxy", "setAngles", [
+                nao.execute_command("ALMotionProxy", "setAngles", [
                     ['HeadYaw', 'HeadPitch'], [0, curr_head], 0.2
                 ])
-                NAO.move(x, 0, z)
+                nao.move(x, 0, z)
                 time.sleep(3)
 
 

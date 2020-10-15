@@ -3,7 +3,7 @@
 
 """ Gives commands to take an object from the floor """
 
-from NAO_interface import execute_command
+from nao_interface import execute_command
 import time
 
 
