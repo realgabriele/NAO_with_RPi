@@ -25,16 +25,17 @@ def executioner():
     for message in subCom.listen():
         if message['type'] == 'message':
             proxy, command, parameters = pattern.findall(message['data'])[0]
-            print(proxy+'.'+command+'('+parameters+')')
+            print(proxy + '.' + command + '(' + parameters + ')')
             var = globals()[proxy]
-            e = eval('var.'+command+'('+parameters+')')
-            red.publish("response", command+";"+str(e))
+            e = eval('var.' + command + '(' + parameters + ')')
+            red.publish("response", command + ";" + str(e))
             print e
 
 
 def main():
     global red, subCom, Commands
-    Commands = open('commands.txt', 'r').read().rstrip().split('\n')
+    Commands = [line for line in open('commands.txt', 'r').read().rstrip().split('\n') if not line[0] == '#']
+
     red = redis.Redis(host=cfg.REDIS_IP, port=cfg.REDIS_PORT)
     subCom = red.pubsub()
     subCom.subscribe('commands')
@@ -45,7 +46,7 @@ def main():
     try:
         executioner()
     except KeyboardInterrupt:
-        print("Interrupted by user, shutting down")
+        print("Commands: Interrupted, shutting down")
         sys.exit(0)
 
 

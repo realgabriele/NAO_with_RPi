@@ -8,19 +8,24 @@ import commands_executioner
 import events_extractor
 import memory_extractor
 
-processes = [camera_extractor.main,
-             commands_executioner.main,
-             events_extractor.main,
-             memory_extractor.main]
+proc_names = [camera_extractor.main,
+              commands_executioner.main,
+              events_extractor.main,
+              memory_extractor.main]
 
 if __name__ == "__main__":
-    for proc in processes:
-        p = multiprocessing.Process(target=proc)
-        p.daemon = True
-        p.start()
+    processes = []
+
+    for name in proc_names:
+        proc = multiprocessing.Process(target=name)
+        proc.daemon = True
+        proc.start()
+        processes.append(proc)
 
     try:
         while True:
             pass
     except KeyboardInterrupt:
+        for proc in processes:
+            proc.join()
         print("exit main")

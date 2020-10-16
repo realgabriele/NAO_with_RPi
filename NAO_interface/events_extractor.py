@@ -49,7 +49,7 @@ class EventSubscriber(ALModule):
                                 "onDetected")
 
 
-def main(ip, port):
+def main():
     """ Main entry point """
     # We need this broker to be able to construct
     # NAOqi modules and subscribe to other modules
@@ -57,19 +57,19 @@ def main(ip, port):
     myBroker = ALBroker("sensors_extractor",
                         "0.0.0.0",  # listen to anyone
                         0,  # find a free port and use it
-                        ip,  # parent broker IP
-                        port)  # parent broker port
+                        cfg.NAO_IP,  # parent broker IP
+                        cfg.NAO_PORT)  # parent broker port
 
     global red
     red = redis.Redis(host=cfg.REDIS_IP, port=cfg.REDIS_PORT, db=0)
 
     global memory, sonar
-    memory = ALProxy("ALMemory", ip, port)
-    sonar = ALProxy("ALSonar", ip, port)
+    memory = ALProxy("ALMemory", cfg.NAO_IP, cfg.NAO_PORT)
+    sonar = ALProxy("ALSonar", cfg.NAO_IP, cfg.NAO_PORT)
     sonar.subscribe("sonar")
 
     global Events
-    Events = open('events.txt', 'r').read().rstrip().split('\n')
+    Events = [line for line in open('events.txt', 'r').read().rstrip().split('\n') if not line[0] == '#']
     for event in Events:
         print event
         globals()[event] = EventSubscriber(event)
@@ -79,11 +79,11 @@ def main(ip, port):
             time.sleep(1)
             print("")
     except KeyboardInterrupt:
-        print("Interrupted by user, shutting down")
+        print("Events: Interrupted, shutting down")
         sonar.unsubscribe("sonar")
         myBroker.shutdown()
         sys.exit(0)
 
 
 if __name__ == "__main__":
-    main(cfg.NAO_IP, cfg.NAO_PORT)
+    main()

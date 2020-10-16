@@ -45,7 +45,7 @@ def main():
             camera_extractor()
             time.sleep(0.5)
     except KeyboardInterrupt:
-        print("Interrupted by user, shutting down")
+        print("Camera: Interrupted, shutting down")
         # camera.unsubscribe(nameId)
         camera.unsubscribe(Zero)
         camera.unsubscribe(Uno)

@@ -25,7 +25,7 @@ def memory_extractor():
 
 def main():
     global Values
-    Values = open('memory.txt', 'r').read().rstrip().split('\n')
+    Values = [line for line in open('memory.txt', 'r').read().rstrip().split('\n') if not line[0] == '#']
 
     global red, memory
     red = redis.Redis(host=cfg.REDIS_IP, port=cfg.REDIS_PORT)
@@ -38,7 +38,7 @@ def main():
             time.sleep(1)
 
     except KeyboardInterrupt:
-        print("Interrupted by user, shutting down")
+        print("Memory: Interrupted, shutting down")
         sys.exit(0)
 
 
