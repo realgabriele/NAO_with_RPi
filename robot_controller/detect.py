@@ -8,28 +8,41 @@ import numpy as np
 import nao_interface
 
 
-def detect_ocv(frame, obj):
+def detect_ocv(image, obj):
+    """ Detect the object in the frame.
+
+    This method uses OpenCV library to detect the object shape and color inside the frame.
+    :param OpenCV image: the image to analyze
+    :param str obj: the object to look for
+    :return: position and size of the object relative to the frame
+    :rtype: ((float, float), float)
+    """
 
     # define the lower and upper boundaries of the objects in the HSV color space
     low_bnd, up_bnd = None, None
-    if obj == "Palla":      # RED ball
-        low_bnd = (0, 1, 0)
-        up_bnd = (13, 255, 255)
-    elif obj == "Macchina":  # BLUE car
+    if obj == "palla":      # RED ball
+        low_bnd = [(160, 100, 100), (0, 100, 100)]
+        up_bnd = [(180, 255, 255), (30, 255, 255)]
+    elif obj == "macchina": # BLUE car
         low_bnd = (70, 60, 80)
         up_bnd = (120, 255, 255)
-    elif obj == "Papera":   # YELLOW duck
+    elif obj == "papera":   # YELLOW duck
         low_bnd = (10, 70, 127)
         up_bnd = (30, 255, 255)
 
-    # resize the frame, blur it, and convert it to the HSV color space
-    # frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+    # blur the frame, and convert it to the HSV color space
+    res_y, res_x, _ = image.shape
+    blurred = cv2.GaussianBlur(image, (11, 11), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
-    # construct a mask for the choosen color, then perform a series of
+    # construct a mask for the chosen color, then perform a series of
     # dilations and erosions to remove any small blobs left in the mask
-    mask = cv2.inRange(hsv, low_bnd, up_bnd)
+    if type(low_bnd == list):
+        mask = cv2.inRange(hsv, low_bnd[0], up_bnd[0])
+        for i in range(1, len(low_bnd)):
+            mask += cv2.inRange(hsv, low_bnd[i], up_bnd[i])
+    else:
+        mask = cv2.inRange(hsv, low_bnd, up_bnd)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -43,33 +56,40 @@ def detect_ocv(frame, obj):
     cnts = imutils.grab_contours(cnts)
 
     # filters the cnts based on reference contours
-    ref_contours = np.load("cnt/papera.npy", allow_pickle=True)
-
+    ref_contours = np.load("cnt/" + obj + ".npy", allow_pickle=True)
     result = []
     for cnt in cnts:
         if cv2.contourArea(cnt) > 200:  # minimum area
             for ref_cnt in ref_contours:
                 match = cv2.matchShapes(ref_cnt, cnt, 1, 0)
-                if match < 0.10:        # maximum match
+                if match < 0.10:  # maximum match
                     result.append(cnt)
     cnts = result
 
     # only proceed if at least one contour was found
     if len(cnts) > 0:
-        # find the largest contour in the mask, then use
-        # it to compute the minimum enclosing circle and
-        # centroid
+        # find the largest contour in the mask, then use it
+        # to compute the minimum enclosing circle and centroid
         c = max(cnts, key=cv2.contourArea)
         ((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
+        # normalize the position and radius compared to the frame size
+        center = (center[0] / res_x, center[1] / res_y)
+        radius = radius / res_y
+
         return center, radius
-    else:
+    else:   # the obj was not found in the image
         return None, None
 
+
 def detect_colorblob():
-    sub = NAO_interface.get_events()
+    """ detect object via ColorBlobDetected NAO event.
+    Not used: currently this method is in beta version and needs further testings.
+    """
+
+    sub = nao_interface.get_events()
 
     for msg in sub.listen():
         if msg['type'] != 'message':
@@ -80,19 +100,20 @@ def detect_colorblob():
         return str(value)
 
 
-def detect(obj, cam):
+def detect(obj, cam=0):
     """
     detect the object inside the current camera frame
     :param str obj: object to be detected
-    :return: ((center_x, center_y), radius)
+    :return: ((center_x, center_y), radius) - position and size of the object relative to the frame
+    :rtype: ((float, float), float)
     """
 
-    # frame = NAO_interface.get_camera()
+    # get current frame
+    frame = nao_interface.get_camera(cam)
 
-    # da eliminare
-    ret, frame = cam.read()
-    frame = cv2.flip(frame, 1)
-    cv2.imshow("camera", frame)
-    k = cv2.waitKey(5)
+    # show the frame in a popup window
+    cv2.imshow("frame", frame)
+    cv2.waitKey(5)
 
+    # detect object position in frame
     return detect_ocv(frame, obj)

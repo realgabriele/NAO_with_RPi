@@ -11,6 +11,7 @@ import time
 
 def before():
     nao.execute_command("ALRobotPostureProxy", "goToPosture", ['StandInit', 0.7])
+    print("posizione iniziale")
 
 
 def after():
@@ -21,58 +22,59 @@ def search(obj):
     threshold = 0.1
     curr_head = 0
 
-    import cv2
-    cam = cv2.VideoCapture(0)
-    cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-
     while True:
-        # center, radius = detect(obj)
-        center, radius = detect(obj, cam)
+        center, radius = detect(obj)
+        print("center: " + str(center))
+        print("radius: " + str(radius))
 
         if center is None:  # non trovato
             # cerca (muovi in tondo)
             nao.move(0, 0, -0.2)
-            time.sleep(3)
+            time.sleep(2)
 
         else:  # trovato
             cntr_x, cntr_y = center
             x, y, z = 0, 0, 0
 
             if cntr_x < 0.5 - threshold:  # centra orizzontale (con threshold)
-                z = -0.1
-            elif cntr_x > 0.5 + threshold:
                 z = +0.1
+            elif cntr_x > 0.5 + threshold:
+                z = -0.1
 
             if cntr_y < 0.5 - threshold:  # centra verticale (con threshold) - movimento testa
                 y = -0.1
             elif cntr_y > 0.5 + threshold:
                 y = +0.1
 
-            if radius < 10:  # muovi (verso oggetto)
-                x = 0.2
-            elif radius > 50:
+            if radius < 0.27:  # muovi (verso oggetto)
+                x = 0.27 - radius
+            elif radius > 0.37:
                 x = -0.1
 
+            print((x, y, z))
             if x == y == z == 0:
+                print("prendendo!")
                 prendi()
             else:
+                print("(x, y, z): " + str((x, y, z)))
                 curr_head += y
                 nao.execute_command("ALMotionProxy", "setAngles", [
                     ['HeadYaw', 'HeadPitch'], [0, curr_head], 0.2
                 ])
                 nao.move(x, 0, z)
-                time.sleep(3)
+                time.sleep(1)
 
 
 def main():
     before()
+    time.sleep(3)
 
     # wait for the input object
-    obj = listen()
+    # obj = listen()
 
     # search the object
     # search(obj)
-    search("Papera")
+    search("palla")
 
     # release the resources
     after()
