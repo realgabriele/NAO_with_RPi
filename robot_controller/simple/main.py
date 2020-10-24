@@ -2,7 +2,6 @@
 # -*- encoding: UTF-8 -*-
 
 import nao_interface as nao
-from listen import listen
 from detect import detect
 from prendi import prendi
 
@@ -16,6 +15,7 @@ def before():
 
 def after():
     nao.execute_command("ALMotionProxy", "rest")
+    print("resting")
 
 
 def search(obj):
@@ -23,46 +23,57 @@ def search(obj):
     curr_head = 0
 
     while True:
+        print("-----")
+        print()
         center, radius = detect(obj)
         print("center: " + str(center))
         print("radius: " + str(radius))
 
         if center is None:  # non trovato
             # cerca (muovi in tondo)
+            if curr_head < 0:curr_head += 0.1
+            elif curr_head > 0.1: curr_head -= 0.1
+            nao.execute_command("ALMotionProxy", "setAngles", [
+                ['HeadYaw', 'HeadPitch'], [0, curr_head], 0.2
+            ])
             nao.move(0, 0, -0.2)
-            time.sleep(2)
+            time.sleep(1)
 
         else:  # trovato
             cntr_x, cntr_y = center
             x, y, z = 0, 0, 0
 
-            if cntr_x < 0.5 - threshold:  # centra orizzontale (con threshold)
+            # centra orizzontale (con threshold)
+            if cntr_x < 0.5 - threshold:
                 z = +0.1
             elif cntr_x > 0.5 + threshold:
                 z = -0.1
 
-            if cntr_y < 0.5 - threshold:  # centra verticale (con threshold) - movimento testa
-                y = -0.1
+            # centra verticale (con threshold) - movimento testa
+            if cntr_y < 0.5 - threshold:
+                y = cntr_y - 0.5
             elif cntr_y > 0.5 + threshold:
-                y = +0.1
+                y = cntr_y - 0.5
 
-            if radius < 0.27:  # muovi (verso oggetto)
-                x = 0.27 - radius
-            elif radius > 0.37:
+            # muovi (verso oggetto)
+            if radius < 0.24:
+                x = 0.24 - radius
+            elif radius > 0.4:
                 x = -0.1
 
-            print((x, y, z))
+            print("(x, y, z): " + str((x, y, z)))
             if x == y == z == 0:
+                nao.move(0, 0, 0)
                 print("prendendo!")
                 prendi()
+                return
             else:
-                print("(x, y, z): " + str((x, y, z)))
                 curr_head += y
                 nao.execute_command("ALMotionProxy", "setAngles", [
                     ['HeadYaw', 'HeadPitch'], [0, curr_head], 0.2
                 ])
                 nao.move(x, 0, z)
-                time.sleep(1)
+                time.sleep(0.3)
 
 
 def main():
@@ -77,8 +88,11 @@ def main():
     search("palla")
 
     # release the resources
-    after()
+    # after()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        after()

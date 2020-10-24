@@ -36,6 +36,8 @@ def get_camera(camera=0):
     """
 
     red = redis.Redis(host=cfg.REDIS_IP, port=cfg.REDIS_PORT)
+    # return pickle.loads(red.get("camera" + str(camera)), encoding='bytes')
+
     sub = red.pubsub()
     sub.subscribe("camera" + str(camera))
     while True:

@@ -55,7 +55,7 @@ def detect_ocv(image, obj):
                             cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    # filters the cnts based on reference contours
+    # filters the cnts based on shape of reference contours
     ref_contours = np.load("cnt/" + obj + ".npy", allow_pickle=True)
     result = []
     for cnt in cnts:
