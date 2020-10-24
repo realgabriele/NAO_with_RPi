@@ -5,9 +5,10 @@
     Show everything """
 
 import redis
-
-from Tkinter import *
-from PIL import Image, ImageTk
+import cv2
+import numpy as np
+import sys
+from PIL import Image
 
 Memory = None
 Events = None
@@ -57,16 +58,15 @@ def update_camera():
     global camera_win, subCam
     message = subCam.get_message()
     if message and message['type'] == 'message':
-        import datetime
-        print(datetime.datetime.now().time())
-        naoImage = eval(message['data'])
-        image = Image.frombytes("RGB", (naoImage[0], naoImage[1]), naoImage[6])
+        nao_image = eval(message['data'])
+        #                                   width         height         array
+        pil_image = Image.frombytes("RGB", (nao_image[0], nao_image[1]), nao_image[6])
 
-        img = ImageTk.PhotoImage(image)
-        lbl = Label(camera_win, image=img)
-        lbl.grid(column=0, row=0)
-        camera_win.update_idletasks()
-        camera_win.update()
+        # CV2
+        open_cv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
+        cv2.imshow("image", open_cv_image)
+        cv2.waitKey(5)
 
 
 def main():
@@ -82,8 +82,8 @@ def main():
     #memory_win.title("Memory Values")
     #events_win = Tk()
     #events_win.title("Events")
-    camera_win = Tk()
-    camera_win.title("Camera")
+    #camera_win = Tk()
+    #camera_win.title("Camera")
 
     try:
         while True:
@@ -98,8 +98,8 @@ def main():
 
 def init_val():
     global Memory, Events
-    Memory = open('memory.txt', 'r').read().rstrip().split('\n')
-    Events = open('events.txt', 'r').read().rstrip().split('\n')
+    Memory = [line for line in open('memory.txt', 'r').read().rstrip().split('\n') if not line[0] == '#']
+    Events = [line for line in open('events.txt', 'r').read().rstrip().split('\n') if not line[0] == '#']
 
 
 if __name__ == "__main__":

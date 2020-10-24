@@ -40,8 +40,9 @@ def getVisionSensor(visionSensorName,clientID):
         open_cv_image = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2BGR)
         open_cv_image = cv2.flip(open_cv_image, 0)
         red.publish("camera0", pickle.dumps(open_cv_image, protocol=2))
+        red.set("camera0", pickle.dumps(open_cv_image, protocol=2))
 
-        time.sleep(1)
+        time.sleep(0.5)
 
     print 'End of Simulation'
 

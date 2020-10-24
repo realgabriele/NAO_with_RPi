@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" Streams camera images via a Redis channel """
+""" streams camera images via a Redis channel """
 
 import sys
 import time
 import redis
+from PIL import Image
 import configuration as cfg
 
 from naoqi import ALProxy
@@ -46,7 +47,6 @@ def main():
             time.sleep(0.5)
     except KeyboardInterrupt:
         print("Camera: Interrupted, shutting down")
-        # camera.unsubscribe(nameId)
         camera.unsubscribe(Zero)
         camera.unsubscribe(Uno)
         sys.exit(0)
