@@ -1,56 +1,84 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" Gives commands to take an object from the floor """
+""" Gives commands to take an object from the table. """
 
-import rospy
-import redis
+from nao_interface import execute_command
 import time
-from nao_control.srv import Prendi, PrendiResponse
 
 
-def handle_prendi(req):
-    red = redis.Redis(host='redis-ip', port=6379)
+def stampa(car):
+    #input()
+    print(car)
 
-    vel = "0.5"	# velocita dei movimenti
 
-    red.publish("commands", "ALRobotPostureProxy/goToPosture;['StandZero', 1.0]")
+def prendi():
+    """ Take the object from the table. """
 
-    # evita tavolo
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['RShoulderRoll','LShoulderRoll'],"
-                            "[-1.32,           1.32,       ], "+vel+"]")
+    vel = 0.1  # velocita dei movimenti
+
+    stampa("a")
+    # standing initial position
+    execute_command("ALRobotPostureProxy", "goToPosture", ['Stand', 0.7])
+
     time.sleep(1)
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['RShoulderPitch','LShoulderPitch'],"
-                            "[ 0.00,            0.00,       ], "+vel+"]")
-    time.sleep(1)
-    red.publish("commands", "ALRobotPostureProxy/goToPosture;['StandZero', 1.0]")
+
+    ''' evita tavolo '''
+
+    stampa("b")
+    # braccia larghe dai fianchi
+    execute_command("ALMotionProxy", "setAngles", [
+        ['RShoulderRoll', 'LShoulderRoll'],
+        [-1.32          , 1.32           ], vel])
+
     time.sleep(2)
 
-    ### prendi oggetto dal tavolo
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['LWristYaw','RWristYaw','LHand','RHand'],"
-                            "[-1.82,       1.82,       1.0,    1.0 ], "+vel+"]")
-    # LShoulderPitch = 25°
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['LShoulderPitch','RShoulderPitch'],"
-                            "[ 0.43,            0.43], "+vel+"]")
-    time.sleep(2)
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['LElbowRoll','RElbowRoll'],"
-                            "[-0.78,        0.78], "+vel+"]")
-    time.sleep(2)
-    red.publish("commands", "ALMotionProxy/setAngles;["
-                            "['LShoulderPitch','RShoulderPitch'],"
-                            "[ 0.00,            0.00], "+vel+"]")
-    return PrendiResponse(True)
+    stampa("c")
+    # gira le braccia
+    execute_command("ALMotionProxy", "setAngles", [
+        ['RShoulderPitch', 'LShoulderPitch'],
+        [-0.14            ,-0.14            ], vel])
 
-def prendi_server():
-    rospy.init_node('prendi')
-    s = rospy.Service('prendi', Prendi, handle_prendi)
-    rospy.spin()
+    time.sleep(2)
+
+    stampa("d")
+    # stand (quasi) zero
+    execute_command("ALMotionProxy", "setAngles", [
+        ['RShoulderRoll', 'LShoulderRoll','RElbowRoll', 'LElbowRoll', 'RElbowYaw', 'LElbowYaw'],
+        [ 0.0,             0.0,            0.0,          0.0,          0.0,         0.0], vel])
+
+    time.sleep(3)
+
+    stampa("e")
+    # gira le mani verso oggetto
+    execute_command("ALMotionProxy", "setAngles", [
+        ['LWristYaw', 'RWristYaw', 'LHand', 'RHand'],
+        [-1.82      ,  1.82      ,  1.00  ,  1.00  ], vel])
+
+    time.sleep(3)
+
+    stampa("g")
+    # unisci braccia
+    execute_command("ALMotionProxy", "setAngles", [
+        ['LElbowRoll', 'RElbowRoll'],
+        [-0.80       , 0.80        ], vel])     # 0.78
+    # afferra oggetto con dita
+    execute_command("ALMotionProxy", "setAngles", [
+        ['LHand', 'RHand'],
+        [ 0.80  ,  0.80  ], vel])
+
+    time.sleep(3)
+
+    stampa("h")
+    # solleva oggetto
+    execute_command("ALMotionProxy", "setAngles", [
+        ['LShoulderPitch', 'RShoulderPitch'],
+        [-0.78           , -0.78            ], vel])
+    # .. e testa
+    execute_command("ALMotionProxy", "setAngles", [
+        ['HeadYaw', 'HeadPitch'], [0, -0.23], 0.2
+    ])
 
 
 if __name__ == "__main__":
-    prendi_server()
+    prendi()
