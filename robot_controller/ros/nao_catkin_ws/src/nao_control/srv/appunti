@@ -1,0 +1,2 @@
+aggiungere il nome del file in CMakeList.txt
+add_service_files(..)

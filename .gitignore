@@ -5,3 +5,7 @@
 *.pyc
 
 **/prova*
+
+# ROS
+**/build/
+**/devel/
