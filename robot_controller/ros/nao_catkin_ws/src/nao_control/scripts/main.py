@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: UTF-8 -*-
 
-import nao_interface as nao
+import nao_robot as nao
 from detect import detect
 from prendi import prendi
 
