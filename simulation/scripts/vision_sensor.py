@@ -29,9 +29,10 @@ def getVisionSensor(visionSensorName,clientID):
     res2,resolution,image=vrep.simxGetVisionSensorImage(clientID,visionSensorHandle,0,vrep.simx_opmode_streaming)
     time.sleep(1)
 
+    id = 0
     while vrep.simxGetConnectionId(clientID)!=-1:
         #Get the image of the vision sensor
-        res,resolution,image=vrep.simxGetVisionSensorImage(clientID,visionSensorHandle,0,vrep.simx_opmode_buffer)
+        res, resolution, image = vrep.simxGetVisionSensorImage(clientID, visionSensorHandle, 0, vrep.simx_opmode_buffer)
         print(resolution)
 
         image_byte_array = array.array('b', image)
@@ -41,6 +42,8 @@ def getVisionSensor(visionSensorName,clientID):
         open_cv_image = cv2.flip(open_cv_image, 0)
         red.publish("camera0", pickle.dumps(open_cv_image, protocol=2))
         red.set("camera0", pickle.dumps(open_cv_image, protocol=2))
+        red.set("cameraid", id)
+        id += 1
 
         time.sleep(0.5)
 
