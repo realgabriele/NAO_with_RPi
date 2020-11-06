@@ -19,3 +19,5 @@ WavingDetection/PersonWaving
 ALAudioSourceLocalization/SoundLocated
 WordRecognized
 ALTracker/ColorBlobDetected
+robotIsFalling
+robotHasFallen
