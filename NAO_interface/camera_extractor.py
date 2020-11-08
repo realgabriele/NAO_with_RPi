@@ -8,6 +8,7 @@ import time
 import redis
 import configuration as cfg
 from PIL import Image
+import pickle
 
 from naoqi import ALProxy
 import vision_definitions
@@ -27,7 +28,9 @@ def camera_extractor():
 
     # perform transformation from PIL to OpenCV image
     image = img
-    red.rpush("camera0", str(image))
+
+    # publish image on Redis
+    red.lpush("camera0", pickle.dumps(image, protocol=2))
     red.ltrim("camera0", 0, 9)  # only 10 images queued
 
 
