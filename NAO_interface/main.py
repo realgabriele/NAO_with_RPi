@@ -16,7 +16,7 @@ proc_names = [camera_extractor.main,
               memory_extractor.main,
               commands_executioner.main]
 # for the simulation we only need this process
-# proc_names = [camera_extractor.main]
+proc_names = [commands_executioner.main]
 
 
 if __name__ == "__main__":

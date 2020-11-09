@@ -25,18 +25,45 @@ making use of its channel and keys to provide perceptions and execute commands.
 ![module_image](../docs/assets/robot_controller.png)
 
 
-## Controllers
+### Controllers
 We provided several different sub-modules (architectures) that use different
 technologies or languages.
 
-Every module is described below.
-From more basic to most advanced
+Every module is described below:
 * simple
-* sonar
 * ros
 * qulog
 
 
-## simple
-This controller is the first and simple version of the robot controller.
+### simple
+This controller is the first version of the robot controller.
+It models the Robot in the homonym class, which describes all the current perceptions and available methods.
+
+It's able to react to external events, such as obstacles and falling.
+It all written in Python3
+
+### ROS
+This architecture uses the ROS framework to implement the logic.
+ROS is a standard de-facto for the realization of intelligent agents.
+
+In particular we created several independent nodes and services.
+All of them are used inside the main node. 
+
+### QuLog / TeleoR
+QuLog is a declarative language we used to implement the logic
+for moving towards the object.
+
+The elaboration of the raw data, as well as the Object Detection,
+is performed by Python at a lower level of abstraction.
+Then all the perceptions are shared with the QuLog Belief Store
+
+The program takes care of choose the next action based on the current received perception.
+All of this can be easily made in a high level, declarative language: QuLog.
+
+
+![qulog architecture](../docs/assets/qulog_architecture "Qulog / TeleoR")
+
+All the perceptions (both received and elaborated) are sent to QuLog through a Pedro server.
+On the other way around, all the commands from QuLog are sent too through the Pedro server.
+
 

@@ -5,7 +5,7 @@ import imutils
 from nao_interface import NaoInterface
 
 # SIMULATED robot
-OBJECT_SIZE = 0.28      # pixel width of object from image when close to the robot
+OBJECT_SIZE = 0.29      # pixel width of object from image when close to the robot
 SHOULDER_PITCH = -0.14  # L/RShoulderPitch when collecting the object
 
 # REAL robot
@@ -297,7 +297,7 @@ class Robot:
                 self.get_up()
                 continue
 
-            if center is None or (center is not None and radius < 0.1):
+            if center is None or (center is not None and radius < OBJECT_SIZE-0.1):
                 print("obstacle dir: " + str(self.obstacle_detected_direction))
                 print("obstacle: dist" + str(self.obstacle_detected_distance))
                 if self.obstacle_detected_direction is not None and self.obstacle_detected_distance < 0.2:
