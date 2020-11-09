@@ -33,15 +33,18 @@ class EventSubscriber(ALModule):
     # callback(std::string eventName, float distance, std::string subscriberIdentifier)
     def onDetected(self, name, value):
         # Unsubscribe to the event when talking, to avoid repetitions
+        print("a")
         memory.unsubscribeToEvent(name,
                                   name)
 
         # Redis
+        print("b")
         print(name + ":[" + str(value) + "]")
 
         global red, i
         i = i+1
         red.publish("events", name + ";" + str(value) + ";" + str(i))
+
 
         # Subscribe again to the event
         memory.subscribeToEvent(name,

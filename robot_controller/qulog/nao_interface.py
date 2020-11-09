@@ -49,30 +49,11 @@ class NaoInterface:
         :rtype: OpenCV image (numpy ndarray)
         """
 
-        '''while self.red.get("cameraid") == self.camera_id:
-            pass
-        self.camera_id = self.red.get("cameraid")
-
-        # load OpenCV image
-        image = pickle.loads(self.red.get("camera" + str(camera)), encoding='bytes')
-        return image'''
-
         sub = self.red.pubsub()
         sub.subscribe("camera_notice")
-        # sub.subscribe("camera" + str(camera))
+
         for message in sub.listen():
             if message['type'] == 'message':
                 # load OpenCV image
                 image = pickle.loads(self.red.blpop("camera" + str(camera))[1], encoding='bytes')
                 return image
-
-    def move(self, x, y, z):
-        """ Move NAO robot on the 3-axis.
-
-        :param float x: front-back velocity in m/s
-        :param float y: left-right velocity in m/s
-        :param float z: velocity vertical axis in rad/s
-        """
-
-        self.execute_command("ALMotionProxy", "move", [x, y, z])
-

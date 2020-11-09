@@ -1,0 +1,108 @@
+%% Copyright 2017 Keith Clark, Peter Robinson
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permisions and
+%% limitations under the License.
+
+%% code modified under educational project necessities by Gabriele Tagliente.
+
+%%% Use it with the Python robot controller in main.py started with the terminal command:
+%%% python main.py
+%%% To start this program run:
+%%% teleor -Aagent
+%%% Then, in the interpreter:
+%%% consult main.   or  [main].
+%%% go().
+
+def dir::= left | centre | right    % Definition of enumerated type
+def object::= ball | duck
+
+percept holding(), see(num, dir)
+
+rel too_close()
+rel see_to(?dir)
+rel next_to(?dir)
+rel close_to(?dir)
+rel near(?dir)
+
+see_to(Dir) <= see(_Dist, Dir)
+too_close() <= see(Dist, _Dir) & Dist < -1
+next_to(Dir) <= see(Dist, Dir) & Dist < 1
+close_to(Dir) <= see(Dist, Dir) & Dist < 10
+near(Dir) <= see(Dist, Dir) & Dist < 33
+
+rel taken()
+taken() <= next_to(_) & holding()
+
+def discrete::= grab() | release() | stand()
+def durative::= move(num) | side_move(dir, num) | turn(dir,num)
+  
+tel collect_object()
+collect_object(){
+    taken()                     ~> ()
+    too_close()                 ~> get_next_to()
+    % get robot next to the drop while holding() remains inferable
+    next_to(centre)             ~> grab()
+    next_to(Dir)                ~> turn(Dir,0.2)
+    % If need be, turn the robot to face the bottle
+    holding()                   ~> release()
+    true                        ~> get_next_to() % Get robot next to the object
+}
+
+tel get_next_to()
+get_next_to(){
+    too_close()             ~> approach(-0.5,0.2)
+    next_to(centre)         ~> ()
+    next_to(Dir)            ~> turn(Dir,0.1)
+    close_to(_)             ~> approach(0.1,0.2)
+    % Now very near to Th, slow right down
+    near(_)                 ~> approach(0.5,0.5)
+    % more slowly to achieve very_near(Th,Dir)
+    see_to(_)               ~> approach(1.5,0.3)
+    % approach Th quickly to achieve  near(Th,_)
+    % true                    ~> wander(left)
+    true                    ~> turn(right,0.5)
+    % Th not in sight, turn hoping to see it 
+}
+
+tel wander(dir)
+wander(Dir){
+    true ~> [turn(Dir,0.5):random_int(3,6), move(2):random_int(2,4), wander(opposite_dir(Dir))]
+}
+
+tel approach(num,num)
+approach(Fs,Ts){                    % Only active whilst  see(Th,_) holds
+    see_to(centre)     ~> move(Fs)    % whilst see(Th,centre), move forward
+    see_to(Dir)        ~> move(Fs),turn(Dir,Ts) % else swerve in  Dir direction
+    }                              % to bring Th back into centre view
+
+tel main()
+main(){
+    true ~> collect_object()
+    %true ~> [collect_object():2, ():2, main()]
+}
+
+act go()
+go() ~>
+    start_agent(nao_robot@localhost, all) ;
+    start_task(collector, main())
+
+
+fun opposite_dir(dir) -> dir
+opposite_dir(left) -> right
+opposite_dir(right) -> left
+
+fun direction_for(int) -> dir
+direction_for(0) -> left
+direction_for(1) -> right
+
+fun choose_direction() -> dir
+choose_direction() -> direction_for(random_int(0,1))

@@ -19,7 +19,6 @@ def memory_extractor():
     global Values, red
     for value in Values:
         read_val = memory.getData(value)
-        # print(value + ":\t" + str(read_val))
         red.set(value, read_val)
 
 
@@ -35,7 +34,7 @@ def main():
         while True:
             # print("\n\n")
             memory_extractor()
-            time.sleep(1)
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Memory: Interrupted, shutting down")

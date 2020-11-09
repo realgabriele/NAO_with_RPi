@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import sys
 from PIL import Image
+import time
 
 Memory = None
 Events = None
@@ -37,6 +38,7 @@ def update_memory():
 def update_events():
     global events_win, Events, subEv
     dict = {e: False for e in Events}
+
     message = subEv.get_message()
     while message:
         print(message)
@@ -45,6 +47,7 @@ def update_events():
             value = message['data'].split(';')[1]
             dict[event] = value
         message = subEv.get_message()
+
     for num, event in enumerate(dict):
         txt = Label(events_win, text=event)
         txt.grid(column=0, row=num)
@@ -78,19 +81,19 @@ def main():
     subCam.subscribe('camera0')
 
     global memory_win, events_win, camera_win
-    #memory_win = Tk()
-    #memory_win.title("Memory Values")
-    #events_win = Tk()
-    #events_win.title("Events")
-    #camera_win = Tk()
-    #camera_win.title("Camera")
+    memory_win = Tk()
+    memory_win.title("Memory Values")
+    events_win = Tk()
+    events_win.title("Events")
+    camera_win = Tk()
+    camera_win.title("Camera")
 
     try:
         while True:
-            #update_memory()
-            #update_events()
+            update_memory()
+            update_events()
             update_camera()
-            #time.sleep(1)
+            time.sleep(1)
     except KeyboardInterrupt:
         print("Interrupted by user, shutting down")
         sys.exit(0)

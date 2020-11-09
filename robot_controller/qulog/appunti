@@ -1,0 +1,26 @@
+Perceptions:
+* see(distance, direction)
+* holding()
+Commands:
+* move(num)
+* turn(direction)
+* grab()
+* release()
+
+
+[see(left,3.1), holding()]
+
+Perceptions:
+* see(distance, direction)
+* obstacle(distance, direction)
+* holding()
+* fallen()
+* grip_close()
+Commands:
+* move(num)
+* side_move(dir)
+* turn(direction)
+
+* grab()
+* release()
+* stand()
