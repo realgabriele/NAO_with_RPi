@@ -38,8 +38,7 @@ def handle_listen(req):
 
 def listen_server():
     rospy.init_node('listen')
-    s
-= rospy.Service('listen', Listen, handle_listen)
+    s = rospy.Service('listen', Listen, handle_listen)
     rospy.spin()
 
 

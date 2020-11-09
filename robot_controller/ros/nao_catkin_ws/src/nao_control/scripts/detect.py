@@ -5,7 +5,7 @@ import cv2
 import imutils
 import numpy as np
 import configuration as cfg
-from nao_robot import get_camera
+from nao_interface import get_camera
 import rospy
 import redis
 from nao_control.srv import Detect, DetectResponse

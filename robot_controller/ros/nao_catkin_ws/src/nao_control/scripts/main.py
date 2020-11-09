@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: UTF-8 -*-
 
-import nao_robot as nao
-from detect import detect
-from prendi import prendi
-
+import nao_interface as nao
 import time
 
 import rospy
-from std_msgs.msg import String #è giusto così?
+# from std_msgs.msg import String #è giusto così?
 from nao_control.srv import *
 
 
@@ -32,7 +29,7 @@ def search(obj):
     while True:
         print("-----")
         print()
-        pos = detect(obj)
+        pos = detect(obj).position
         center, radius = ((pos[0], pos[1]), pos[2])
         print("center: " + str(center))
         print("radius: " + str(radius))
@@ -90,10 +87,10 @@ def main():
 
     # wait for the input object
     # obj = listen()
+    obj = "palla"
 
     # search the object
-    # search(obj)
-    search("palla")
+    search(obj)
 
     # release the resources
     # after()

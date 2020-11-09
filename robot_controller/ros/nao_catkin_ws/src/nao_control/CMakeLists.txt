@@ -56,9 +56,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  Prendi.srv
   Listen.srv
-  Muoviti.srv
+  Detect.srv
 )
 
 ## Generate actions in the 'action' folder
