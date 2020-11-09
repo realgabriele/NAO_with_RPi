@@ -95,6 +95,7 @@ def handle_detect(req):
     :rtype: float64[]
     """
 
+    '''
     obj = req.obj
 
     # get current frame
@@ -106,6 +107,9 @@ def handle_detect(req):
 
     # detect object position in frame
     (x, y), r = detect_ocv(frame, obj)
+    '''
+
+    (x, y), r = ((0.5, 0.4), 16)
     return DetectResponse([x, y, r])
 
 
