@@ -5,7 +5,6 @@ import nao_interface as nao
 import time
 
 import rospy
-# from std_msgs.msg import String #è giusto così?
 from nao_control.srv import *
 
 

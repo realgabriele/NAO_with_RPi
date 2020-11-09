@@ -14,6 +14,9 @@ def handle_listen(req):
     sub = red.pubsub()
     sub.subscribe("events")
 
+    # simulation:
+    return ListenResponse("palla")
+
     red.publish("commands", "ALSpeechRecognitionProxy/pause;[True]")
     red.publish("commands", "ALSpeechRecognitionProxy/setLanguage;['Italian']")
     red.publish("commands", "ALSpeechRecognitionProxy/setVocabulary;["
@@ -22,7 +25,6 @@ def handle_listen(req):
     red.publish("commands", "ALSpeechRecognitionProxy/pause;[False]")
     red.publish("commands", "ALTextToSpeechProxy/setParameter;['speed',80]")
 
-    # return ListenResponse("palla")
     for msg in sub.listen():
         if msg['type'] == 'message':
             event = msg['data'].split(';')[0]
