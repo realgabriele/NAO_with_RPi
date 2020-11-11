@@ -16,7 +16,7 @@ THRESHOLD_X = 0.02
 THRESHOLD_Y = 0.05
 THRESHOLD_Z = 0.07
 
-SPEED_FACTOR = 1
+SPEED_FACTOR = 0.8
 
 
 def detect_ocv(image, obj):
@@ -331,7 +331,7 @@ class Robot:
                 continue
 
             self.take()
-            self.nao_interface.move(-1, 0, 0)
+            #self.nao_interface.move(-1, 0, 0)
             time.sleep(4)
 
             return True
