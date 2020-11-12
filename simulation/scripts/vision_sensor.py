@@ -47,7 +47,7 @@ def getVisionSensor(visionSensorName,clientID):
         '''red.publish("camera0", pickle.dumps(open_cv_image, protocol=2))
         red.set("camera0", pickle.dumps(open_cv_image, protocol=2))'''
 
-        time.sleep(0.5)
+        time.sleep(0.05)
 
     print 'End of Simulation'
 

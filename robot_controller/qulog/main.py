@@ -218,14 +218,10 @@ class Robot(object):
         center, radius = detect_ocv(image, self.object)
         if center is not None:
             self.see = (rad2dist(radius), dir2text(center[0] - 0.5))
-            self.head_y += 0.1 if center[1] > 0.5 else -0.1
+            self.update_head(center[1])
         else:  # the obj was not found in the image
             self.see = None
-            self.head_y += 0.1 if self.head_y < 0 else -0.1
-        # update head pitch
-        self.nao_interface.execute_command("ALMotionProxy", "setAngles", [
-            ['HeadYaw', 'HeadPitch'], [0, self.head_y], 0.2
-        ])
+            self.update_head(-1)
 
     def check_holding(self):
         if self.grip_close:
@@ -277,6 +273,24 @@ class Robot(object):
 
     def update_move(self):
         self.nao_interface.execute_command("ALMotionProxy", "move", self.speed)
+
+    def update_head(self, cntr_y):
+        if cntr_y < 0:  # not found
+            if self.head_y < 0:
+                self.head_y += 0.1
+            elif self.head_y > 0.1:
+                self.head_y -= 0.1
+        else:
+            y = 0
+            # centra verticale
+            if cntr_y < 0.45:
+                y = cntr_y - 0.5
+            elif cntr_y > 0.55:
+                y = cntr_y - 0.5
+            self.head_y += y
+        self.nao_interface.execute_command("ALMotionProxy", "setAngles", [
+            ['HeadYaw', 'HeadPitch'], [0, self.head_y], 0.2
+        ])
 
     def take(self):
         """ Take the object from the table. """

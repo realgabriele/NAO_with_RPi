@@ -34,7 +34,7 @@ rel close_to(?dir)
 rel near(?dir)
 
 see_to(Dir) <= see(_Dist, Dir)
-too_close() <= see(Dist, _Dir) & Dist < -1
+too_close() <= see(Dist, Dir) & Dist < -1
 next_to(Dir) <= see(Dist, Dir) & Dist < 1
 close_to(Dir) <= see(Dist, Dir) & Dist < 10
 near(Dir) <= see(Dist, Dir) & Dist < 33
