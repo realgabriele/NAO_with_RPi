@@ -2,13 +2,13 @@
 
 This module constitutes the interface between NAOqi and Redis.
 
-## Prerequisites
-This software is needed in NAO
+## Requirements
+The following software has to be installed on NAO:
 * Python 2.7
-    * multiprocessing : python library to execute all processes as concurrent subprocesses
-    * redis: python library that provides a Redis Client to manage a connection to a  remote Redis Server
+    * [multiprocessing](https://docs.python.org/2/library/multiprocessing.html) : python library to execute all processes as concurrent subprocesses
+    * [redis](https://pypi.org/project/redis/): python library that provides a Redis Client to manage a connection to a  remote Redis Server
 * PyNAOqi - the python library for NAO interaction.
-You can download it [here]
+You can download it [here](https://developer.softbankrobotics.com/)
 
 ## Quick start
 * copy this directory into the NAO OS

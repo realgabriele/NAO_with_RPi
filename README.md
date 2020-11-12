@@ -21,9 +21,7 @@ as long as it satisfies the software requisites.
 * RaspberryPi
 
 ### Software
-* todo SW requirements 
-(more, on the specific project directory)
-
+* you can find detailed requirements on the specific project directory
 
 
 ## Description

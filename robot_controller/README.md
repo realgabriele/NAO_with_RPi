@@ -30,12 +30,12 @@ We provided several different sub-modules (architectures) that use different
 technologies or languages.
 
 Every module is described below:
-* simple
-* ros
-* qulog
+* Python
+* ROS
+* QuLog
 
 
-### simple
+### Python
 This controller is the first version of the robot controller.
 It models the Robot in the homonym class, which describes all the current perceptions and available methods.
 
@@ -61,7 +61,7 @@ The program takes care of choose the next action based on the current received p
 All of this can be easily made in a high level, declarative language: QuLog.
 
 
-![qulog architecture](../docs/assets/qulog_architecture "Qulog / TeleoR")
+![qulog architecture](../docs/assets/qulog_architecture.png "Qulog / TeleoR")
 
 All the perceptions (both received and elaborated) are sent to QuLog through a Pedro server.
 On the other way around, all the commands from QuLog are sent too through the Pedro server.
