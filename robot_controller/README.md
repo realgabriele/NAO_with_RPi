@@ -11,6 +11,14 @@ In particular the main goal can be divided in the following steps:
 - move: we have to deal with the movement of the robot towards the object, and in general in complex environment
 - take the object: once reached, grab the object with the hands.
 
+## Requirements
+* Python3
+    * OpenCV
+    * Redis
+
+All requirements can be fulfilled installing the [ROSBots!](https://medium.com/@hadabot/ready-to-use-image-raspbian-stretch-ros-opencv-324d6f8dcd96)
+OS image.
+
 ## Assumptions
 0. Simple environment: we assume the robot in a plan room where the object can be directly seen.
 We didn't implement functions to navigate through a labyrinth. 
