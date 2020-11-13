@@ -73,11 +73,6 @@ get_next_to(){
     % Th not in sight, turn hoping to see it 
 }
 
-tel wander(dir)
-wander(Dir){
-    true ~> [turn(Dir,0.5):random_int(3,6), move(2):random_int(2,4), wander(opposite_dir(Dir))]
-}
-
 tel approach(num,num)
 approach(Fs,Ts){                    % Only active whilst  see(Th,_) holds
     see_to(centre)     ~> move(Fs)    % whilst see(Th,centre), move forward
@@ -94,15 +89,3 @@ act go()
 go() ~>
     start_agent(nao_robot@localhost, all) ;
     start_task(collector, main())
-
-
-fun opposite_dir(dir) -> dir
-opposite_dir(left) -> right
-opposite_dir(right) -> left
-
-fun direction_for(int) -> dir
-direction_for(0) -> left
-direction_for(1) -> right
-
-fun choose_direction() -> dir
-choose_direction() -> direction_for(random_int(0,1))
