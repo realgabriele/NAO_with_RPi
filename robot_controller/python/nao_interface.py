@@ -63,7 +63,7 @@ class NaoInterface:
         for message in sub.listen():
             if message['type'] == 'message':
                 # load OpenCV image
-                image = pickle.loads(self.red.blpop("camera" + str(camera))[1], encoding='bytes')
+                image = pickle.loads(self.red.brpop("camera" + str(camera))[1], encoding='bytes')
                 return image
 
     def move(self, x, y, z):

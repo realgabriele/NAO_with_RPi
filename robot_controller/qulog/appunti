@@ -1,12 +1,11 @@
-[see(13, left), holding()]
-
 Perceptions:
 * see(distance, direction)
 * holding()
 
-* obstacle(distance, direction)
-* fallen()
-* grip_close()
+ToDo:
+    * obstacle(distance, direction)
+    * fallen()
+    * grip_close()
 
 Commands:
 * move(num)
